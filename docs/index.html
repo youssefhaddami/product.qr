@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Product Info</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 2rem;
+      background-color: #f8f9fa;
+    }
+    .card {
+      background: white;
+      max-width: 400px;
+      margin: auto;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .timer {
+      font-size: 1.5rem;
+      font-weight: bold;
+      color: #d9534f;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1 id="productName">Loading...</h1>
+    <p><strong>Fabrication Date:</strong> <span id="fabDate"></span></p>
+    <p><strong>Expiration Date:</strong> <span id="expDate"></span></p>
+    <p><strong>Time Left:</strong> <span class="timer" id="countdown"></span></p>
+  </div>
+
+  <script>
+    function getQueryParam(key) {
+      return new URLSearchParams(window.location.search).get(key);
+    }
+
+    const name = getQueryParam("name") || "Unknown Product";
+    const fab = getQueryParam("fab");
+    const exp = getQueryParam("exp");
+
+    document.getElementById("productName").textContent = name;
+    document.getElementById("fabDate").textContent = fab || "N/A";
+    document.getElementById("expDate").textContent = exp || "N/A";
+
+    function updateCountdown() {
+      const now = new Date();
+      const expDate = new Date(exp);
+      const diff = expDate - now;
+
+      if (diff <= 0) {
+        document.getElementById("countdown").textContent = "Expired";
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      document.getElementById("countdown").textContent =
+        `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    if (exp) {
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    } else {
+      document.getElementById("countdown").textContent = "Unknown";
+    }
+  </script>
+</body>
+</html>
